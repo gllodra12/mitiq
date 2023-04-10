@@ -1,0 +1,26 @@
+name: Automatic posts for Mitiq release
+
+on:
+  push:
+    branches:
+      - 1482-automatic-post
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out mitiq
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          make install requirements
+          pip install discord
+      - name: Post Mitiq release
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN}}
+        run: python .github/post_release.py
